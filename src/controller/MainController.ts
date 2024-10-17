@@ -13,19 +13,51 @@ export class MainController{
     private additiveController = new AdditiveController
     // user edits food
     async userEditsFoodAll(request: Request, response: Response, next: NextFunction, channel: Channel) {
-        return this.userEditsFoodController.all(response)
+        return this.userEditsFoodController.all(request, response)
     }
     async userEditsFoodOne(request: Request, response: Response, next: NextFunction, channel: Channel) {
         return this.userEditsFoodController.one(request.params.id, response)
     }
     async userEditsFoodUpdate(request: Request, response: Response, next: NextFunction, channel: Channel) {
-        return this.userEditsFoodController.update(request.params.id, request.body, response)
+        console.log(request.params.id, request.body)
+        await this.userEditsFoodController.update(request.params.id, request.body, response)
+        .then (result => {
+                channel.publish("FoodEdit", 
+                    "submission.judged",  
+                    Buffer.from(JSON.stringify({
+                        userId: request.body.idUser,
+                        judgeId: request.body.idJudge,
+                        rejectReason: request.body.rejectReason,
+                        state: request.body.state,
+                        foodName: request.body.foodData.product_name
+                    }))
+                )
+                if (request.body.state === "accepted"){
+                    if (request.body.type === "edit"){
+                        channel.publish("FoodEdit", "food-local.update", Buffer.from(JSON.stringify({
+                            foodData: request.body.foodData,
+                            id: request.body.idFood,
+                            name: request.body.name
+                        })))
+                    }
+                    else if (request.body.type === "new"){
+                        channel.publish("FoodEdit", "food-local.new", Buffer.from(JSON.stringify({
+                            foodData: request.body.foodData,
+                            id: request.body.idFood,
+                            name: request.body.name
+                        })))
+                    }
+                    
+                }
+                response.send(result)
+        })
     }
     async userEditsFoodSave(request: Request, response: Response, next: NextFunction, channel: Channel) {
-        return this.userEditsFoodController.save(request.body, response)
+        console.log(request.body)
+        //return this.userEditsFoodController.save(request.body, response)
     }
     async userEditsFoodRemove(request: Request, response: Response, next: NextFunction, channel: Channel){
-        return this.userEditsFoodController.remove(request.params.userEditsFoodId, response)
+        return this.userEditsFoodController.remove(request.params.id, response)
     }
     // food local
     async foodLocalAll(request: Request, response: Response, next: NextFunction, channel: Channel) {
@@ -48,7 +80,7 @@ export class MainController{
         await this.additiveController.save(request.body, response)
         .then(result => {
             if (result){
-                channel.publish("FoodEdits", "additive.save", Buffer.from(JSON.stringify(result)))
+                channel.publish("FoodEdit", "additive.save", Buffer.from(JSON.stringify(result)))
             }
             else{
                 response.status(400)
@@ -60,7 +92,7 @@ export class MainController{
         await this.additiveController.remove(request.params.id, response)
         .then(result => {
             if (result){
-                channel.publish("FoodEdits", "additive.remove", Buffer.from(JSON.stringify({id: request.params.id})))
+                channel.publish("FoodEdit", "additive.remove", Buffer.from(JSON.stringify({id: request.params.id})))
             }
             else{
                 response.status(400)
@@ -70,7 +102,7 @@ export class MainController{
     }
     // allergen
     async allergenAll(request: Request, response: Response, next: NextFunction, channel: Channel) {
-        return this.allergenController.all(response)
+        return this.allergenController.all()
     }
     async allergenOne(request: Request, response: Response, next: NextFunction, channel: Channel) {
         return this.allergenController.one(request.params.id, response)

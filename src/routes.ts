@@ -21,6 +21,12 @@ export const Routes = [{
 },
 {
     method: "post",
+    route: "/submissions/:id/evaluate",
+    controller: MainController,
+    action: "userEditsFoodUpdate"
+},
+{
+    method: "post",
     route: "/submissions-images",
     controller: UserEditsFoodController,
     action: "uploadImage"

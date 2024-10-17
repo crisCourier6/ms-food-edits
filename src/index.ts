@@ -7,6 +7,7 @@ import * as amqp from "amqplib/callback_api"
 import { FoodLocalController } from "./controller/FoodLocalController"
 import { Additive } from "./entity/Additive"
 import { Allergen } from "./entity/Allergen"
+const path = require('path');
 
 
 AppDataSource.initialize().then(async () => {
@@ -30,7 +31,7 @@ AppDataSource.initialize().then(async () => {
 
             // create express app
             const app = express()
-            
+            app.use(bodyParser.json())
             // register express routes from defined application routes
             Routes.forEach(route => {
                 const controllerInstance = new (route.controller as any)();
@@ -41,14 +42,14 @@ AppDataSource.initialize().then(async () => {
                 if (controllerInstance.upload) {
                     // If the controller has an 'upload' middleware (multer), use it
                     middlewares.push(controllerInstance.upload.fields([
-                        { name: 'imgupload_ingredients', maxCount: 1 },
-                        { name: 'imgupload_front', maxCount: 1 },
-                        { name: 'imgupload_nutrition', maxCount: 1 }
+                        { name: 'ingredients', maxCount: 1 },
+                        { name: 'front', maxCount: 1 },
+                        { name: 'nutrition', maxCount: 1 }
                     ]));
                 }
 
-                (app as any)[route.method](route.route, ...middlewares, (req: Request, res: Response, next: Function) => {
-                    const result = action(req, res, next);
+                (app as any)[route.method](route.route, ...middlewares, (req: Request, res: Response, next: Function,) => {
+                    const result = action(req, res, next, channel);
                     if (result instanceof Promise) {
                         result.then(result => result !== null && result !== undefined ? res.send(result) : undefined);
                     } else if (result !== null && result !== undefined) {
@@ -56,7 +57,7 @@ AppDataSource.initialize().then(async () => {
                     }
                 });
             })
-            app.use(bodyParser.json())
+            
 
             channel.consume("FoodEdit_FoodLocal", async (msg)=>{
                 let action = msg.fields.routingKey.split(".")[1]
@@ -120,7 +121,9 @@ AppDataSource.initialize().then(async () => {
             // }
 
             // start express server
+            app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
             app.listen(3004)
+            
 
             console.log("Express server has started on port 3004. Open http://localhost:3004/submissions to see results")
 

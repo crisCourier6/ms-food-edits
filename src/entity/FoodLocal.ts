@@ -12,6 +12,6 @@ export class FoodLocal {
     @Column({default: "defaultFood.png"})
     picture: string
 
-    @Column({nullable: true})
-    foodData: string
+    @Column({type: "jsonb", nullable: true})
+    foodData: any
 }

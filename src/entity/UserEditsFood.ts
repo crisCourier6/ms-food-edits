@@ -33,7 +33,7 @@ export class UserEditsFood {
     @Column({nullable:true})
     imagesFolder: string
 
-    @Column()
-    foodData: string
+    @Column({type: "jsonb", nullable:true})
+    foodData: any
 
 }
