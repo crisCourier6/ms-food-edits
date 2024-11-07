@@ -3,112 +3,112 @@ import { UserEditsFoodController } from "./controller/UserEditsFoodController"
 
 export const Routes = [{
     method: "get",
-    route: "/submissions",
+    route: "/api/v1/submissions",
     controller: MainController,
     action: "userEditsFoodAll"
 }, 
 {
     method: "get",
-    route: "/submissions/:id",
+    route: "/api/v1/submissions/:id",
     controller: MainController,
     action: "userEditsFoodOne"
 }, 
 {
     method: "post",
-    route: "/submissions/:id",
+    route: "/api/v1/submissions/:id",
     controller: MainController,
     action: "userEditsFoodUpdate"
 },
 {
     method: "post",
-    route: "/submissions/:id/evaluate",
+    route: "/api/v1/submissions/:id/evaluate",
     controller: MainController,
     action: "userEditsFoodUpdate"
 },
 {
     method: "post",
-    route: "/submissions-images",
+    route: "/api/v1/submissions-images",
     controller: UserEditsFoodController,
     action: "uploadImage"
 },
 {
     method: "post",
-    route: "/submissions",
+    route: "/api/v1/submissions",
     controller: UserEditsFoodController,
     action: "save"
 }, 
 {
     method: "delete",
-    route: "/submissions/:id",
+    route: "/api/v1/submissions/:id",
     controller: MainController,
     action: "userEditsFoodRemove"
 },
 // food local
 {
     method: "get",
-    route: "/submissions-food",
+    route: "/api/v1/submissions-food",
     controller: MainController,
     action: "foodLocalAll"
 }, 
 {
     method: "get",
-    route: "/submissions-food/:id",
+    route: "/api/v1/submissions-food/:id",
     controller: MainController,
     action: "foodLocalOne"
 }, 
 // additives
 {
     method: "get",
-    route: "/submissions-additives/",
+    route: "/api/v1/submissions-additives/",
     controller: MainController,
     action: "additiveAll"
 }, 
 {
     method: "post",
-    route: "/submissions-additives/",
+    route: "/api/v1/submissions-additives/",
     controller: MainController,
     action: "additiveSave"
 }, 
 {
     method: "get",
-    route: "/submissions-additives/:id",
+    route: "/api/v1/submissions-additives/:id",
     controller: MainController,
     action: "additiveOne"
 }, 
 {
     method: "post",
-    route: "/submissions-additives/:id",
+    route: "/api/v1/submissions-additives/:id",
     controller: MainController,
     action: "additiveUpdate"
 }, 
 {
     method: "delete",
-    route: "/submissions-additives/:id",
+    route: "/api/v1/submissions-additives/:id",
     controller: MainController,
     action: "additiveRemove"
 }, 
 // allergen
 {
     method: "get",
-    route: "/submissions-allergens/",
+    route: "/api/v1/submissions-allergens/",
     controller: MainController,
     action: "allergenAll"
 }, 
 {
     method: "post",
-    route: "/submissions-allergens/",
+    route: "/api/v1/submissions-allergens/",
     controller: MainController,
     action: "allergenSave"
 }, 
 {
     method: "get",
-    route: "/submissions-allergens/:id",
+    route: "/api/v1/submissions-allergens/:id",
     controller: MainController,
     action: "allergenOne"
 }, 
 {
     method: "delete",
-    route: "/submissions-allergens/:id",
+    route: "/api/v1/submissions-allergens/:id",
     controller: MainController,
     action: "allergenRemove"
 },
