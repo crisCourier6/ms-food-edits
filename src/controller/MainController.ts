@@ -36,12 +36,12 @@ export class MainController{
                     if (request.body.type === "edit"){
                         const newFood = request.body.foodData
                         let fullname = newFood.product_name
-                        
+
                         if(newFood.brands){
-                            fullname = fullname + " - " + newFood.brands.split(",")[0]
+                            fullname = fullname + "-" + newFood.brands.split(",")[0]
                         }
                         if (newFood.quantity){
-                            fullname = fullname + " - " + newFood.quantity
+                            fullname = fullname + "-" + newFood.quantity
                         }
                         channel.publish("FoodEdit", "food-local.update", Buffer.from(JSON.stringify({
                             foodData: request.body.foodData,
@@ -52,12 +52,12 @@ export class MainController{
                     else if (request.body.type === "new"){
                         const newFood = request.body.foodData
                         let fullname = newFood.product_name
-                        
+
                         if(newFood.brands){
-                            fullname = fullname + " - " + newFood.brands.split(",")[0]
+                            fullname = fullname + "-" + newFood.brands.split(",")[0]
                         }
                         if (newFood.quantity){
-                            fullname = fullname + " - " + newFood.quantity
+                            fullname = fullname + "-" + newFood.quantity
                         }
                         channel.publish("FoodEdit", "food-local.new", Buffer.from(JSON.stringify({
                             foodData: request.body.foodData,
