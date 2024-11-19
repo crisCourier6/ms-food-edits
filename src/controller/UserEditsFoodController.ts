@@ -8,7 +8,7 @@ const path = require('path');
 const FormData = require('form-data');
 import * as fs from 'fs';
 
-axios.defaults.baseURL = "https://world.openfoodfacts.net/"
+axios.defaults.baseURL = "https://world.openfoodfacts.org/"
 
 export class UserEditsFoodController {
 
@@ -43,9 +43,9 @@ export class UserEditsFoodController {
     });
 
     async uploadImageToOFF(barcode, imagePath, imageField) {
-        const url = 'https://world.openfoodfacts.net/cgi/product_image_upload.pl'; // Use test server
-        const username = 'off';
-        const password = 'off';
+        const url = 'cgi/product_image_upload.pl'; // Use test server
+        const username = process.env.OFF_USER;
+        const password = process.env.OFF_PASS;
         console.log(barcode, imagePath, imageField)
     
         // Create a FormData instance
@@ -144,8 +144,8 @@ export class UserEditsFoodController {
                     method: "GET",
                     url: "cgi/product_jqm2.pl",
                     params: {
-                        // login: process.env.OFF_USER,
-                        // password: process.env.OFF_PASS,
+                        login: process.env.OFF_USER,
+                        password: process.env.OFF_PASS,
                         ...foodData,
                         code: foodData.id,
                         ingredients_lc: "es",
@@ -171,8 +171,8 @@ export class UserEditsFoodController {
                     params: 
                     {
                         ...data,
-                        // login: process.env.OFF_USER,
-                        // password: process.env.OFF_PASS,
+                        login: process.env.OFF_USER,
+                        password: process.env.OFF_PASS,
                         code: foodData.id,
                         ingredients_text: foodData.ingredients_text_es,
                         ingredients_lc: "es",
