@@ -122,7 +122,7 @@ AppDataSource.initialize().then(async () => {
 
             // start express server
             app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-            app.listen(process.env.PORT, process.env.HOST)
+            app.listen(process.env.PORT)
 
             console.log(`Express server has started on port ${process.env.PORT}. Open ${process.env.HOST}:${process.env.PORT}/submissions to see results`)
 
