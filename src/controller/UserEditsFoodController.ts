@@ -220,6 +220,9 @@ export class UserEditsFoodController {
             }
             allGood = true
         }
+        else if (data.state === "rejected"){
+            allGood = true
+        }
         if (allGood){
             let updated = await this.userEditsFoodRepository.update(id, data)
             if (updated.affected===1){
