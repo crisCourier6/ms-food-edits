@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm"
+import { FoodHasAdditive } from "./FoodHasAdditive"
 
 @Entity()
 export class Additive {
@@ -6,7 +7,7 @@ export class Additive {
     @PrimaryColumn({unique: true})
     id: string
 
-    @Column({nullable: true})
+    @Column({nullable:true})
     name: string
 
     @Column({nullable:true})
@@ -21,12 +22,15 @@ export class Additive {
     @Column({nullable:true})
     sources: string
 
-    @Column()
+    @Column({nullable: true})
     vegan: boolean
 
-    @Column()
+    @Column({nullable: true})
     vegetarian: boolean
 
     @Column({nullable:true})
     wikidata: string
+
+    @OneToMany(()=>FoodHasAdditive, foodHasAdditive => foodHasAdditive.additive, {onDelete: "CASCADE"})
+    foodHasAdditive: FoodHasAdditive[]
 }

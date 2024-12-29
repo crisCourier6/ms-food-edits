@@ -1,7 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { Allergen } from "../entity/Allergen"
-import { In } from "typeorm"
+import { In, IsNull, Not } from "typeorm"
 
 export class AllergenController {
 
@@ -12,6 +12,9 @@ export class AllergenController {
     // salidas: Array con todas las filas de la tabla food_local
     async all() {
         return this.allergenRepository.find({
+            where: {
+                name: Not(IsNull())
+            },
             order: {
                 name: 'ASC', // Sort by allergen name in ascending order
             },

@@ -5,6 +5,9 @@ import { UserEditsFood } from "./entity/UserEditsFood"
 import { FoodLocal } from "./entity/FoodLocal"
 import { Additive } from "./entity/Additive"
 import { Allergen } from "./entity/Allergen"
+import { User } from "./entity/User"
+import { FoodHasAdditive } from "./entity/FoodHasAdditive"
+import { FoodHasAllergen } from "./entity/FoodHasAllergen"
 
 // AppDataSource contiene la configuración de la conexión con la base de datos del microservicio
 export const AppDataSource = new DataSource({
@@ -16,7 +19,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME,
     synchronize: true,
     logging: false,
-    entities: [UserEditsFood, FoodLocal, Additive, Allergen],
+    entities: [UserEditsFood, FoodLocal, Additive, Allergen, User, FoodHasAdditive, FoodHasAllergen],
     migrations: [],
     subscribers: [],
 })

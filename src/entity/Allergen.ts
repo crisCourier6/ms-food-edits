@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column, OneToMany } from "typeorm"
+import { FoodHasAllergen } from "./FoodHasAllergen"
 
 @Entity()
 export class Allergen {
@@ -6,7 +7,7 @@ export class Allergen {
     @PrimaryColumn()
     id: string
 
-    @Column()
+    @Column({nullable:true})
     name: string
 
     @Column({nullable:true})
@@ -14,4 +15,7 @@ export class Allergen {
 
     @Column({nullable: true})
     wikidata: string
+
+    @OneToMany(()=>FoodHasAllergen, foodHasAllergen => foodHasAllergen.allergen, {onDelete: "CASCADE"})
+    foodHasAllergen: FoodHasAllergen[]
 }

@@ -7,6 +7,7 @@ import * as amqp from "amqplib/callback_api"
 import { FoodLocalController } from "./controller/FoodLocalController"
 import { Additive } from "./entity/Additive"
 import { Allergen } from "./entity/Allergen"
+import { UserController } from "./controller/UserController"
 const path = require('path');
 
 
@@ -21,13 +22,17 @@ AppDataSource.initialize().then(async () => {
                 throw error1
             }
             const foodLocalController = new FoodLocalController
+            const userController = new UserController
             channel.assertExchange("FoodEdit", "topic", {durable: false})
 
             channel.assertExchange("FoodProfile", "topic", {durable: false})
-            channel.assertExchange("UserProfile", "topic", {durable: false})
+            channel.assertExchange("Accounts", "topic", {durable: false})
 
             channel.assertQueue("FoodEdit_FoodLocal", {durable: false})
             channel.bindQueue("FoodEdit_FoodLocal", "FoodProfile", "food-local.*")
+
+            channel.assertQueue("FoodEdit_Accounts", {durable: false})
+            channel.bindQueue("FoodEdit_Accounts", "Accounts", "user.*")
 
             // create express app
             const app = express()
@@ -44,7 +49,8 @@ AppDataSource.initialize().then(async () => {
                     middlewares.push(controllerInstance.upload.fields([
                         { name: 'ingredients', maxCount: 1 },
                         { name: 'front', maxCount: 1 },
-                        { name: 'nutrition', maxCount: 1 }
+                        { name: 'nutrition', maxCount: 1 },
+                        { name: "packaging", maxCount: 1}
                     ]));
                 }
 
@@ -63,19 +69,49 @@ AppDataSource.initialize().then(async () => {
                 let action = msg.fields.routingKey.split(".")[1]
                 let content = JSON.parse(msg.content.toString())
                 if (action=="save"){
-                    console.log("saving: ", content)
                     await foodLocalController.saveLocal(content)
                     .then(result=>{
                         console.log(result)
                     })
                 }
                 else if (action=="remove"){
-                    console.log("deleting: ", content.id)
                     await foodLocalController.remove(content.id)
+                    .then(result=>{
+                    })
+                }    
+            }, {noAck: true})
+
+            channel.consume("FoodEdit_Accounts", async (msg)=>{
+                let action = msg.fields.routingKey.split(".")[1]
+                
+                if (action=="create"){
+                    let content = JSON.parse(msg.content.toString())
+                    let trimmedContent = {...content, storeProfile:undefined, expertProfile:undefined, userHasRole:undefined}
+                    await userController.create(trimmedContent)
                     .then(result=>{
                         console.log(result)
                     })
-                }    
+                    .catch(error=>console.log(error))
+                }
+                else if (action=="update"){
+                    let content = JSON.parse(msg.content.toString())
+                    let trimmedContent = {...content, storeProfile:undefined, expertProfile: undefined, userHasRole:undefined}
+                    console.log("i should update the user with id: ", trimmedContent)
+                    await userController.update(content)
+                    .then(result=>{
+                        console.log(result)
+                    })
+                    .catch(error=>console.log(error))
+                }
+                else if (action=="remove"){
+                    let content = JSON.parse(msg.content.toString())
+                    console.log("i should delete the user with id: ", content, ", which should delete all his submissions too")
+                    await userController.remove(content)
+                    .then(result=>{
+                        console.log(result)
+                    })
+                    .catch(error=>console.log(error))
+                }
             }, {noAck: true})
 
             // setup express app here

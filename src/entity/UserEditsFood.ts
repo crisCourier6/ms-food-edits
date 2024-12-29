@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm"
+import { FoodLocal } from "./FoodLocal"
+import { User } from "./User"
 
 @Entity()
 export class UserEditsFood {
@@ -9,7 +11,7 @@ export class UserEditsFood {
     @Column()
     idFood: string
 
-    @Column()
+    @Column({nullable: true})
     idUser: string
 
     @Column({nullable: true})
@@ -35,5 +37,13 @@ export class UserEditsFood {
 
     @Column({type: "jsonb", nullable:true})
     foodData: any
+
+    @ManyToOne(()=>FoodLocal, foodLocal => foodLocal.userEditsFood, {onDelete: "CASCADE"})
+    @JoinColumn({name: "idFood"})
+    foodLocal: FoodLocal
+
+    @ManyToOne(()=>User, user => user.userEditsFood, {onDelete: "CASCADE"})
+    @JoinColumn({name: "idUser"})
+    user: User
 
 }
