@@ -189,6 +189,7 @@ export class UserEditsFoodController {
             const edit = await this.one(result.id, res) as UserEditsFood
             console.log("THIS WAS THE EDIT: ", edit)
             if (edit.state === "accepted"){
+                let infoSent = await this.send(edit.foodData, edit.type, res)  
                 let hasLocalAllergens = true
                 let hasLocalAdditives = true
                 const updatedFood = await this.foodLocalController.save({product: edit.foodData, hasLocalAdditives, hasLocalAllergens})
