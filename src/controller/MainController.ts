@@ -8,10 +8,10 @@ import { UserEditsFood } from "../entity/UserEditsFood"
 
 export class MainController{
 
-    private userEditsFoodController = new UserEditsFoodController
-    private foodLocalController = new FoodLocalController
-    private allergenController = new AllergenController
-    private additiveController = new AdditiveController
+    private readonly userEditsFoodController = new UserEditsFoodController
+    private readonly foodLocalController = new FoodLocalController
+    private readonly allergenController = new AllergenController
+    private readonly additiveController = new AdditiveController
     // user edits food
     async userEditsFoodAll(request: Request, response: Response, next: NextFunction, channel: Channel) {
         return this.userEditsFoodController.all(request, response)
@@ -39,7 +39,7 @@ export class MainController{
                     let hasLocalAdditives = true
                     const updatedFood = await this.foodLocalController.save({product: acceptedEdit.foodData, hasLocalAdditives, hasLocalAllergens})
                     if (acceptedEdit.type==="new"){
-                        const addedFood = await this.userEditsFoodController.foodToEdit(acceptedEdit, updatedFood)
+                        await this.userEditsFoodController.foodToEdit(acceptedEdit, updatedFood)
                     }
                     const fullFood = await this.foodLocalController.one(updatedFood.id, response)
                     console.log("THIS HOW THE FOOD ENDED UP: ", fullFood)

@@ -1,11 +1,11 @@
 import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
+import { Response } from "express"
 import { Allergen } from "../entity/Allergen"
 import { In, IsNull, Not } from "typeorm"
 
 export class AllergenController {
 
-    private allergenRepository = AppDataSource.getRepository(Allergen)
+    private readonly allergenRepository = AppDataSource.getRepository(Allergen)
 
     //all()
     // entradas:
@@ -40,7 +40,7 @@ export class AllergenController {
     //          allergens - Array de alimentos
     async getAllbyIds(userRejectsRows: any, res: Response){
         let idList = []
-        for (var row of userRejectsRows){
+        for (let row of userRejectsRows){
             idList.push(row.allergenId)
         }
         const allergens = await this.allergenRepository.find({where: {id: In(idList)}})

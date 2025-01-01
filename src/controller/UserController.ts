@@ -1,13 +1,10 @@
 import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
 import { User } from "../entity/User"
-import { v4 as uuidv4, v6 as uuidv6 } from 'uuid';
 import "dotenv/config"
-import axios from "axios"
 
 export class UserController {
 
-    private userRepository = AppDataSource.getRepository(User)
+    private readonly userRepository = AppDataSource.getRepository(User)
 
     async create(req: any) {
         return this.userRepository.save(req)

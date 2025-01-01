@@ -1,11 +1,11 @@
 import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
+import { Response } from "express"
 import { Additive } from "../entity/Additive"
 import { In, IsNull, Not } from "typeorm"
 
 export class AdditiveController {
 
-    private additiveRepository = AppDataSource.getRepository(Additive)
+    private readonly additiveRepository = AppDataSource.getRepository(Additive)
 
     //all()
     // entradas:
@@ -46,7 +46,7 @@ export class AdditiveController {
     //          additives - Array de alimentos
     async getAllbyIds(userRejectsRows: any, res: Response){
         let idList = []
-        for (var row of userRejectsRows){
+        for (let row of userRejectsRows){
             idList.push(row.additiveId)
         }
         const additives = await this.additiveRepository.find({where: {id: In(idList)}})

@@ -16,12 +16,12 @@ axios.defaults.baseURL = "https://world.openfoodfacts.org/"
 
 export class UserEditsFoodController {
 
-    private userEditsFoodRepository = AppDataSource.getRepository(UserEditsFood)
-    private userRepository = AppDataSource.getRepository(User)
-    private foodLocalRepository = AppDataSource.getRepository(FoodLocal)
-    private foodLocalController = new FoodLocalController
+    private readonly userEditsFoodRepository = AppDataSource.getRepository(UserEditsFood)
+    private readonly userRepository = AppDataSource.getRepository(User)
+    private readonly foodLocalRepository = AppDataSource.getRepository(FoodLocal)
+    private readonly foodLocalController = new FoodLocalController
 
-    private storage = multer.diskStorage({
+    private readonly storage = multer.diskStorage({
         
         destination: (req, file, cb) => {
             fs.mkdirSync('uploads/' + req.body.imagesFolder, { recursive: true });
@@ -99,7 +99,7 @@ export class UserEditsFoodController {
                 }
             });
     
-            console.log('Upload successful');
+            console.log('Upload successful', response);
         } catch (error) {
             console.error('Error uploading image');
         }
