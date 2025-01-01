@@ -33,13 +33,14 @@ export class MainController{
                     }))
                 )
                 if (request.body.state === "accepted"){
-                    console.log("WOOOOOO")
                     const acceptedEdit = await this.userEditsFoodController.one(request.params.id, response) as UserEditsFood
-                    console.log("THIS WAS THE EDIT: ", acceptedEdit)
+                    console.log("THIS WAS THE ACCEPTED EDIT: ", acceptedEdit)
                     let hasLocalAllergens = true
                     let hasLocalAdditives = true
                     const updatedFood = await this.foodLocalController.save({product: acceptedEdit.foodData, hasLocalAdditives, hasLocalAllergens})
-                    console.log("2")
+                    if (acceptedEdit.type==="new"){
+                        const addedFood = await this.userEditsFoodController.foodToEdit(acceptedEdit, updatedFood)
+                    }
                     const fullFood = await this.foodLocalController.one(updatedFood.id, response)
                     console.log("THIS HOW THE FOOD ENDED UP: ", fullFood)
                     channel.publish("FoodEdit", "food-local.save", Buffer.from(JSON.stringify(

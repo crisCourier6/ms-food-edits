@@ -159,40 +159,50 @@ export class UserEditsFoodController {
     }
 
     async save(req: Request, res: Response, next: NextFunction, channel: Channel) {
+        console.log(req.body)
         const {foodData, idFood, idUser, ...submissionData} = req.body
         if (!idFood || !idUser){
             res.status(400);
             throw new Error("Error: formato de id inválido");
         }
-        console.log("hola")
         const parsedData = JSON.parse(foodData)
         const user = await this.userRepository.findOne({where: {id: idUser}})
         const foodLocal = await this.foodLocalRepository.findOne({where: {id: idFood}})
+        console.log(foodLocal)
         const newSubmission: Partial<UserEditsFood> = {
             ...submissionData, // Other fields for the submission
             foodData: parsedData,
             idUser, // Always include the user ID
-            idFood, // Always include the food ID
+            idFood: null,
+            user: null,
+            foodLocal: null
         };
         
         // Add references to existing entities conditionally
         if (user) {
             newSubmission.user = user; // Add user relationship if it exists
+            console.log("i got user")
         }
         
         if (foodLocal) {
             newSubmission.foodLocal = foodLocal; // Add foodLocal relationship if it exists
+            newSubmission.idFood = idFood
+            console.log("i got food")
         }
+        
         await this.userEditsFoodRepository.save(newSubmission)
         .then(async result => {
             console.log(result)
             const edit = await this.one(result.id, res) as UserEditsFood
-            console.log("THIS WAS THE EDIT: ", edit)
+            console.log("THIS WAS THE accepted EDIT: ", edit)
             if (edit.state === "accepted"){
                 let infoSent = await this.send(edit.foodData, edit.type, res)  
                 let hasLocalAllergens = true
                 let hasLocalAdditives = true
                 const updatedFood = await this.foodLocalController.save({product: edit.foodData, hasLocalAdditives, hasLocalAllergens})
+                if (!edit.foodLocal){
+                    await this.userEditsFoodRepository.update(edit.id, {foodLocal: updatedFood})
+                }
                 console.log("2")
                 const fullFood = await this.foodLocalController.one(updatedFood.id, res)
                 console.log("THIS HOW THE FOOD ENDED UP: ", fullFood)
@@ -201,6 +211,7 @@ export class UserEditsFoodController {
             res.send(result)
         })
         .catch(error =>{
+            console.log(error)
             res.send(error)
         })
     }
@@ -264,6 +275,11 @@ export class UserEditsFoodController {
     }
 
     async update(id: string, data: any, response: Response) {
+        let subToUpdate = await this.userEditsFoodRepository.findOne({where: {id:id}})
+        if (subToUpdate.state!=="pending"){
+            response.status(400);
+            throw new Error("Error: El aporte ya fue evaluado") 
+        }
         let updated = await this.userEditsFoodRepository.update(id, data)
         if (updated.affected===1){
             let submission = await this.userEditsFoodRepository.findOneBy({id})
@@ -284,7 +300,7 @@ export class UserEditsFoodController {
                                 const imagePath = path.join(imagesFolderPath, image);
                                 
                                 // Call your function to upload the image
-                                await this.uploadImageToOFF(submission.idFood, imagePath, imageType,);
+                                await this.uploadImageToOFF(submission.foodData.id, imagePath, imageType,);
                             }
                         }
                     } 
@@ -335,6 +351,19 @@ export class UserEditsFoodController {
         } else {
             res.status(400).json({ message: 'No file uploaded' });
         }
+    }
+
+    async foodToEdit(edit:UserEditsFood, food: FoodLocal){
+        const foundEdit = await this.userEditsFoodRepository.findOne({where: {id:edit.id}})
+        if (foundEdit){
+            const updatedEdit = await this.userEditsFoodRepository.update(edit.id, {foodLocal: food, idFood: food.id})
+            if (updatedEdit.affected === 1){
+                console.log("food added to accepted submission")
+                return true
+            }
+            return false
+        }
+        return false
     }
 
 }

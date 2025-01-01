@@ -8,7 +8,7 @@ export class UserEditsFood {
     @PrimaryGeneratedColumn("uuid")
     id: string
 
-    @Column()
+    @Column({nullable: true})
     idFood: string
 
     @Column({nullable: true})
@@ -38,12 +38,12 @@ export class UserEditsFood {
     @Column({type: "jsonb", nullable:true})
     foodData: any
 
-    @ManyToOne(()=>FoodLocal, foodLocal => foodLocal.userEditsFood, {onDelete: "CASCADE"})
+    @ManyToOne(()=>FoodLocal, foodLocal => foodLocal.userEditsFood, {onDelete: "CASCADE", nullable: true})
     @JoinColumn({name: "idFood"})
-    foodLocal: FoodLocal
+    foodLocal?: FoodLocal
 
-    @ManyToOne(()=>User, user => user.userEditsFood, {onDelete: "CASCADE"})
+    @ManyToOne(()=>User, user => user.userEditsFood, {onDelete: "CASCADE", nullable: true})
     @JoinColumn({name: "idUser"})
-    user: User
+    user?: User
 
 }
