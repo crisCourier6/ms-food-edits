@@ -102,10 +102,7 @@ export class FoodLocalController {
         }
 
         const createdFoodLocal = await this.foodLocalRepository.save(foodLocal)
-        if (food.hasLocalAllergens){
-            await this.foodHasAllergenRepository.delete({
-                foodLocalId: createdFoodLocal.id
-            });
+        if (createdFoodLocal){
             if (food.hasLocalAllergens) {
                 await this.foodHasAllergenRepository.delete({
                     foodLocalId: createdFoodLocal.id
