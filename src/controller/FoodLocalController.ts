@@ -97,7 +97,7 @@ export class FoodLocalController {
                 }
             }
         }
-        else{
+        else if(food.foodData.additives_tags){
             newAdditiveTags = food.foodData.additives_tags
         }
 
@@ -330,7 +330,7 @@ export class FoodLocalController {
                 }
             }
         }
-        else{
+        else if(foodData.additives_tags){
             newAdditiveTags = foodData.additives_tags
         }
         console.log("NEWAdDDITIVES: ", newAdditiveTags)
