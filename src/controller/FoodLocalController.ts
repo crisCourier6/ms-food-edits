@@ -93,7 +93,7 @@ export class FoodLocalController {
             }
             else{
                 if (food.foodData.additives_tags){
-                    newAdditiveTags = food.foodData.additives_tags.split(", ")
+                    newAdditiveTags = food.foodData.additives_tags
                 }
             }
         }
