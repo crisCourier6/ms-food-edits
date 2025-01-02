@@ -92,8 +92,8 @@ export class FoodLocalController {
                 newAdditiveTags = food.foodHasAdditive.map(additive => additive.additiveId)  
             }
             else{
-                if (food.foodData.additives){
-                    newAdditiveTags = food.foodData.additives.split(", ")
+                if (food.foodData.additives_tags){
+                    newAdditiveTags = food.foodData.additives_tags.split(", ")
                 }
             }
         }
@@ -324,9 +324,9 @@ export class FoodLocalController {
                 newAdditiveTags = foodExternal.foodHasAdditive.map(additive => additive.additiveId)
             }
             else{
-                if (foodData.additives){
+                if (foodData.additives_tags){
                     console.log("ALTADDITIVES")
-                    newAdditiveTags = foodData.additives.split(", ")
+                    newAdditiveTags = foodData.additives_tags
                 }
             }
         }
